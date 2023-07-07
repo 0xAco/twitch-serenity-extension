@@ -1,0 +1,19 @@
+/* viewer count desktop no theater */
+p[data-a-target='animated-channel-viewers-count'] span, p[data-a-target='animated-channel-viewers-count'] {
+  filter: blur(5px);
+}
+
+/* viewer count thertaer mode - "Playing Pokémon for x viewers" */
+p[data-test-selector='stream-info-card-component__description'] {
+  filter: blur(5px);
+}
+
+/* raiding message - "x viewers are ready to raid in 5s" */
+div[data-test-selector="raid-message"] strong:nth-child(1) {
+  filter: blur(5px);
+}
+
+/* raided message (in chat) - x is raiding with a party of x */
+div[data-test-selector="user-notice-line"] div strong:nth-child(2){
+  filter: blur(5px);
+}

@@ -1,0 +1,17 @@
+{
+  "name": "Serenity extension for Twitch",
+  "description": "Keep your head free from anxiety while you stream by hiding Twitch stats",
+  "version": "0.0.1",
+  "manifest_version": 3,
+  "action": {
+    "default_title": "Serenity extension for Twitch",
+    "default_popup": "src/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.twitch.tv/*"],
+      "js": ["src/app.js"],
+      "css": ["src/injected.css"]
+    }
+  ]
+}
