@@ -5,13 +5,11 @@
   "manifest_version": 3,
   "action": {
     "default_title": "Serenity extension for Twitch",
-    "default_popup": "src/popup.html"
+    "default_popup": "src/popup/popup.html"
   },
-  "content_scripts": [
-    {
-      "matches": ["https://www.twitch.tv/*"],
-      "js": ["src/app.js"],
-      "css": ["src/injected.css"]
-    }
-  ]
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "permissions": ["tabs", "scripting"],
+  "host_permissions": ["https://www.twitch.tv/*"]
 }
