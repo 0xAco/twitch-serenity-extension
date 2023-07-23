@@ -3,8 +3,13 @@
 console.log('init popup');
 document.addEventListener('DOMContentLoaded', function() {
   const slider = document.getElementById('slider');
-  slider.addEventListener('change', function() {
-    console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
-    chrome.runtime.sendMessage({ isActivated: slider.checked });
+
+  // slider event
+  slider.addEventListener('change', () => {
+    sendSliderUpdate(slider.checked);
   })
 });
+
+const sendSliderUpdate = (status) => {
+  chrome.runtime.sendMessage({ isActivated: status });
+}

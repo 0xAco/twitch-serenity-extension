@@ -1,24 +1,33 @@
 'use strict';
 console.log('background up');
 
-chrome.runtime.onMessage.addListener( message => {
-  if (message.isActivated !== undefined) {
+const injectedStyle = 'src/injected.css';
 
-    console.log('new value: ', message.isActivated);
-    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  if (changeInfo.status === "complete") {
+    chrome.scripting.insertCSS({
+      target: { tabId: tabId },
+      files: [injectedStyle]
+    });
+  }
+});
+
+chrome.runtime.onMessage.addListener(message => {
+  if (message.isActivated !== undefined) {
+    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
       const tabId = tabs[0].id;
-      const injectedStyle = 'src/injected.css';
-      
-      if (message.isActivated)
-        chrome.scripting.insertCSS({ 
+
+      if (message.isActivated) {
+        chrome.scripting.insertCSS({
           target: { tabId },
-          css: injectedStyle
+          files: [injectedStyle]
         });
-      else
-        chrome.scripting.removeCSS({ 
+      } else {
+        chrome.scripting.removeCSS({
           target: { tabId },
-          css: injectedStyle
+          files: [injectedStyle]
         });
+      }
     })
   }
-})
+});
