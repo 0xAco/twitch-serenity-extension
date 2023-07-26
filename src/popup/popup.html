@@ -1,17 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="popup.css" rel="stylesheet">
   <title>Serenity extension - config</title>
   <script type="text/javascript" src="popup.js"></script>
+  <script src="../external/css-doodle@0.34.9.js"></script>
 </head>
 <body>
-  <h1>WIP pour activer / désactiver l'extension</h1>
-  <label class="switch">
-    <input id="slider" type="checkbox" checked>
-    <span class="slider round"></span>
-  </label>
+  <css-doodle class="doodle-container" click-to-update>
+    :doodle {
+      @grid: 10 // #0a0c27;
+    }
+    
+    clip-path: @shape( 
+      points: 80; m: 8; n: .4;
+      p1: abs.cos(t * m/4) ^ n;
+      p2: abs.sin(t * m/4) ^ n;
+      r:  1 / (p1 + p2) ^ (1 / n);
+    );
+    background: hsla(-@i(*4), 70%, 68%, @r.9);
+    transform:
+      scale(@r(.1, .7))
+      translate(@m2.@r(±150%))
+      rotate(@r(360)deg);
+  </css-doodle>
+
+  <main class="main__content">
+    <label class="slider__label" for="slider">Activer l'extension</label>
+    <label class="slider__switch">
+      <input id="slider" class="slider__input" type="checkbox" checked>
+      <span class="slider__display"></span>
+    </label>
+  </main>
 </body>
 </html>
