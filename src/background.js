@@ -4,23 +4,29 @@ console.log('background up');
 let isInjected = true;
 const injectedStyle = 'src/injected.css';
 
+// sets a new value for isInjected
+function setIsInjected(value) {
+  isInjected = value;
+  if (isInjected) {
+    chrome.action.setBadgeBackgroundColor({ color: '#6441a5' })
+    chrome.action.setBadgeText({ text: 'on' });
+  } else {
+    chrome.action.setBadgeText({ text: '' });
+  }
+}
+
 // check if style is injected
 async function isStyleInjected() {
   try {
     const response = await fetch(chrome.runtime.getURL(injectedStyle));
-    const cssurl = response.url.slice(52);
-    // 52 first caracters is the chrome-extension/[id] prefix
-    if (cssurl === injectedStyle){
-      isInjected = true;
-      return true;
-    } else {
-      isInjected = false;
-      return false;
-    }
+    const cssurl = response.url.slice(52); // 52 first caracters is the chrome-extension/[id] prefix
+
+    if (cssurl === injectedStyle) setIsInjected(true);
+    return isInjected;
   } catch {
     console.error('not found: ', injectedStyle);
-    isInjected = false;
-    return false;
+    setIsInjected(false);
+    return isInjected;
   }
 }
 
@@ -52,7 +58,7 @@ function handleCSS(checked) {
       });
     }
 
-    isInjected = checked;
+    setIsInjected(checked);
   })
 }
 
