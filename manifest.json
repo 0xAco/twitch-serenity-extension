@@ -17,5 +17,5 @@
     "service_worker": "src/background.js"
   },
   "permissions": ["tabs", "scripting"],
-  "host_permissions": ["https://www.twitch.tv/*"]
+  "host_permissions": ["https://*.twitch.tv/*"]
 }

@@ -1,13 +1,15 @@
-/* viewer count desktop no theater */
+/*--- TWITCH ---*/
+/* viewer count */
 p[data-a-target='animated-channel-viewers-count'] span, p[data-a-target='animated-channel-viewers-count'] {
-  filter: blur(5px);
+  display: none;
 }
 
-/* viewer count thertaer mode - "Playing Pokémon for x viewers" */
+/* viewer count theater mode - "Playing Pokémon for x viewers" */
 p[data-test-selector='stream-info-card-component__description'] {
-  filter: blur(5px);
+  display: none;
 }
 
+/* same code for twitch & dashboard */
 /* raiding message - "<strong>x viewers</strong><span>are ready to raid </span><strong>x in 5s</strong>" */
 div[data-test-selector="raid-message"] strong:nth-child(1), div[data-test-selector="raid-message"] span {
   display: none;
@@ -15,5 +17,5 @@ div[data-test-selector="raid-message"] strong:nth-child(1), div[data-test-select
 
 /* raided message (in chat) - x is raiding with a party of x */
 div[data-test-selector="user-notice-line"] div strong:nth-child(2){
-  filter: blur(5px);
+  display: none;
 }
