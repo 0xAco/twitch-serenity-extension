@@ -19,3 +19,16 @@ div[data-test-selector="raid-message"] strong:nth-child(1), div[data-test-select
 div[data-test-selector="user-notice-line"] div strong:nth-child(2){
   display: none;
 }
+
+/* raided message (in chat) - 7TV - x raided with a viewer count of x */
+.seventv-raid-message-container {
+  position: relative;
+}
+
+.seventv-raid-message-container::before {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 71%;
+  background: black;
+}
