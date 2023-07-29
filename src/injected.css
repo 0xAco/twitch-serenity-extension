@@ -32,3 +32,12 @@ div[data-test-selector="user-notice-line"] div strong:nth-child(2){
   width: 71%;
   background: black;
 }
+
+/* DASHBOARD events */
+.iOfhCc {
+  color: transparent;
+}
+
+.iOfhCc * {
+  color: white;
+}
