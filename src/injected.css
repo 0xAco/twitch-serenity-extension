@@ -1,6 +1,18 @@
 /*--- TWITCH ---*/
+
+/* homepage */
+p[class='CoreText-sc-1txzju1-0'] {
+  display: none;
+}
+
+/* sidebar - followed and recommended channels - "Live | x viewers" */
+.online-side-nav-channel-tooltip__body div.Layout-sc-1xcs6mc-0.xxjeD {
+  display: none !important;
+}
+
 /* viewer count */
-p[data-a-target='animated-channel-viewers-count'] span, p[data-a-target='animated-channel-viewers-count'] {
+p[data-a-target='animated-channel-viewers-count'] span,
+p[data-a-target='animated-channel-viewers-count'] {
   display: none;
 }
 
@@ -11,12 +23,13 @@ p[data-test-selector='stream-info-card-component__description'] {
 
 /* same code for twitch & dashboard */
 /* raiding message - "<strong>x viewers</strong><span>are ready to raid </span><strong>x in 5s</strong>" */
-div[data-test-selector="raid-message"] strong:nth-child(1), div[data-test-selector="raid-message"] span {
+div[data-test-selector="raid-message"] strong:nth-child(1),
+div[data-test-selector="raid-message"] span {
   display: none;
 }
 
 /* raided message (in chat) - x is raiding with a party of x */
-div[data-test-selector="user-notice-line"] div strong:nth-child(2){
+div[data-test-selector="user-notice-line"] div strong:nth-child(2) {
   display: none;
 }
 

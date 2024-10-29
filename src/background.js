@@ -1,5 +1,6 @@
 'use strict';
-console.log('background up');
+
+console.log('[Serenity] background up');
 
 let isInjected = true;
 const injectedStyle = 'src/injected.css';
@@ -19,9 +20,7 @@ function setIsInjected(value) {
 async function isStyleInjected() {
   try {
     const response = await fetch(chrome.runtime.getURL(injectedStyle));
-    const cssurl = response.url.slice(52); // 52 first caracters is the chrome-extension/[id] prefix
-
-    if (cssurl === injectedStyle) setIsInjected(true);
+    if (response.url.endsWith(injectCSS)) setIsInjected(true);
     return isInjected;
   } catch {
     console.error('not found: ', injectedStyle);
@@ -31,7 +30,7 @@ async function isStyleInjected() {
 }
 
 // retrieve an info from background.js
-function retrieveInfo(info) {
+function askBackground(info) {
   let res = null;
   switch (info) {
     case 'injectionStatus':
@@ -42,39 +41,44 @@ function retrieveInfo(info) {
 }
 
 // inject or remove CSS from the site
-function handleCSS(checked) {
-  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-    const tabId = tabs[0].id;
+async function injectCSS(state) {
+  const queryOptions = { url: 'https://*.twitch.tv/*'};
+  try {
+    await chrome.tabs.query(queryOptions, tabs => {
 
-    if (checked) {
-      chrome.scripting.insertCSS({
-        target: { tabId },
-        files: [injectedStyle]
-      });
-    } else {
-      chrome.scripting.removeCSS({
-        target: { tabId },
-        files: [injectedStyle]
-      });
-    }
+      for(const tab of tabs) {
+        const cssInfos = {
+          target: { tabId: tab.id, allFrames: true },
+          files: [injectedStyle],
+        }
 
-    setIsInjected(checked);
-  })
+        if (state) chrome.scripting.insertCSS(cssInfos);
+        else chrome.scripting.removeCSS(cssInfos);
+      }
+
+      setIsInjected(state);
+    });
+  } catch(e) {
+    console.warn(e);
+  }
 }
 
 // inject css when loaded
-chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete") {
+    // check if we got permission
+    const regex = /https:\/\/www\..*twitch\.tv(\/.*)?$/gm;
+    if (!tab.url.match(regex)) return;
+
     chrome.scripting.insertCSS({
-      target: { tabId },
+      target: { tabId, allFrames: true },
       files: [injectedStyle]
-    });
-    isStyleInjected();
-  }
+    }).then(isStyleInjected());
+   }
 });
 
 // handle messages
 chrome.runtime.onMessage.addListener(message => {
-  if (message.hasOwnProperty('requestInfo')) return retrieveInfo(message.requestInfo);
-  if (message.hasOwnProperty('activate')) return handleCSS(message.activate);
+  if (message.hasOwnProperty('requestInfo')) return askBackground(message.requestInfo);
+  if (message.hasOwnProperty('activate')) return injectCSS(message.activate);
 });
