@@ -1,5 +1,10 @@
 /*--- TWITCH ---*/
 
+/* logo */
+.tw-animated-glitch-logo {
+  filter: hue-rotate(90deg);
+}
+
 /* homepage */
 p[class='CoreText-sc-1txzju1-0'] {
   display: none;

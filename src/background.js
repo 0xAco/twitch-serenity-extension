@@ -2,13 +2,17 @@
 
 console.log('[Serenity] background up');
 
-let isInjected = true;
-const injectedStyle = 'src/injected.css';
+const cssPath = 'src/injected.css';
 
 // sets a new value for isInjected
-function setIsInjected(value) {
-  isInjected = value;
-  if (isInjected) {
+function setIsInjected(newValue) {
+  // store new value in local storage
+  chrome.storage.local.set({ isInjected: newValue })
+    .then('[storage] isInjected', newValue)
+    .catch(() => console.warn('storage unreachable'));
+  
+  // update extension badge
+  if (newValue) {
     chrome.action.setBadgeBackgroundColor({ color: '#6441a5' })
     chrome.action.setBadgeText({ text: 'on' });
   } else {
@@ -19,66 +23,96 @@ function setIsInjected(value) {
 // check if style is injected
 async function isStyleInjected() {
   try {
-    const response = await fetch(chrome.runtime.getURL(injectedStyle));
-    if (response.url.endsWith(injectCSS)) setIsInjected(true);
-    return isInjected;
+    const { isInjected } = await chrome.storage.local.get('isInjected');
+    return await isInjected;
   } catch {
-    console.error('not found: ', injectedStyle);
+    console.warn('local storage empty');
     setIsInjected(false);
-    return isInjected;
+    return false;
   }
 }
 
 // retrieve an info from background.js
-function askBackground(info) {
+async function askBackground(info) {
   let res = null;
   switch (info) {
-    case 'injectionStatus':
-      res = isInjected;
+    case 'isInjected':
+      res = await isStyleInjected();
       break;
   }
   return res;
 }
 
 // inject or remove CSS from the site
-async function injectCSS(state) {
+async function injectCSS(newState) {
   const queryOptions = { url: 'https://*.twitch.tv/*'};
-  try {
+  
+  // remove css before re-injecting to
+  // fix a bug when reloading the page
+  if (newState === true) {
     await chrome.tabs.query(queryOptions, tabs => {
-
       for(const tab of tabs) {
         const cssInfos = {
           target: { tabId: tab.id, allFrames: true },
-          files: [injectedStyle],
-        }
+          files: [cssPath],
+        };
+        chrome.scripting.removeCSS(cssInfos);
+      }
+    });
+  }
 
-        if (state) chrome.scripting.insertCSS(cssInfos);
+  try {
+    await chrome.tabs.query(queryOptions, tabs => {
+      for(const tab of tabs) {
+        const cssInfos = {
+          target: { tabId: tab.id, allFrames: true },
+          files: [cssPath],
+        };
+
+        if (newState) chrome.scripting.insertCSS(cssInfos);
         else chrome.scripting.removeCSS(cssInfos);
       }
 
-      setIsInjected(state);
+      setIsInjected(newState);
+      return true;
     });
   } catch(e) {
     console.warn(e);
+    return false;
   }
 }
 
-// inject css when loaded
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete") {
     // check if we got permission
     const regex = /https:\/\/www\..*twitch\.tv(\/.*)?$/gm;
     if (!tab.url.match(regex)) return;
 
-    chrome.scripting.insertCSS({
-      target: { tabId, allFrames: true },
-      files: [injectedStyle]
-    }).then(isStyleInjected());
-   }
+    // init style injection if needed
+    isStyleInjected()
+      .then(initIsInjected => injectCSS(initIsInjected));
+  }
 });
 
 // handle messages
-chrome.runtime.onMessage.addListener(message => {
-  if (message.hasOwnProperty('requestInfo')) return askBackground(message.requestInfo);
-  if (message.hasOwnProperty('activate')) return injectCSS(message.activate);
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  // used to get an info from the background
+  if (request.hasOwnProperty('getInfo'))
+    askBackground(request.getInfo).then(sendResponse);
+
+  // notifies the background that the slider's value has changed
+  if (request.hasOwnProperty('sliderUpdate'))
+    injectCSS(request.sliderUpdate).then(sendResponse);
+
+  return true; // allows for async calls
+});
+
+// handle keyboard shortcuts
+chrome.commands.onCommand.addListener((command) => {
+  switch (command) {
+    case 'toggle':
+      isStyleInjected()
+        .then(toggleInjected => injectCSS(!toggleInjected));
+      break;
+  }
 });
