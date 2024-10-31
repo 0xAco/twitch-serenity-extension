@@ -20,4 +20,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // todo :
 //   - handle raid messages properly
-//   - better name for the extension
+//   - i18n
