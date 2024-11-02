@@ -11,8 +11,14 @@ p[class='CoreText-sc-1txzju1-0'] {
 }
 
 /* sidebar - followed and recommended channels - "Live | x viewers" */
+/* hover over a live channel */
 .online-side-nav-channel-tooltip__body div.Layout-sc-1xcs6mc-0.xxjeD {
   display: none !important;
+}
+
+/* sidebar - deployed */
+.jOVwMQ:has(> p.cmeMuc) {
+  display: none;
 }
 
 /* viewer count */
@@ -39,16 +45,12 @@ div[data-test-selector="user-notice-line"] div strong:nth-child(2) {
 }
 
 /* raided message (in chat) - 7TV - x raided with a viewer count of x */
-.seventv-raid-message-container {
-  position: relative;
+.seventv-raid-message-container span:nth-child(n + 2) {
+  border: 2px solid red;
 }
 
-.seventv-raid-message-container::before {
-  content: '';
-  position: absolute;
-  right: 0; top: 0; bottom: 0;
-  width: 71%;
-  background: black;
+.seventv-raid-message-container .bold + span + span {
+  color: blue !important;
 }
 
 /* DASHBOARD events */
