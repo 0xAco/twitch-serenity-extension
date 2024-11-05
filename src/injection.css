@@ -46,11 +46,20 @@ div[data-test-selector="user-notice-line"] div strong:nth-child(2) {
 
 /* raided message (in chat) - 7TV - x raided with a viewer count of x */
 .seventv-raid-message-container span:nth-child(n + 2) {
-  border: 2px solid red;
+  display: none;
 }
 
-.seventv-raid-message-container .bold + span + span {
-  color: blue !important;
+/* raided message */
+.serenity-raid-message {
+  display: block;
+}
+
+.--serenity-hidden {
+  display: none;
+}
+
+.--serenity-bold {
+  font-weight: bold;
 }
 
 /* DASHBOARD events */

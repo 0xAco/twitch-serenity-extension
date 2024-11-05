@@ -1,8 +1,26 @@
-'use strict';
+/* SERVICE WORKER - main event handler */
+const CSS_PATH = 'src/injection.css';
 
-console.log('[Serenity] background up');
+console.log('[Serenity] service-worker up');
 
-const cssPath = 'src/injected.css';
+async function getCurrentTab() {
+  const queryOptions = { active: true, currentWindow: true };
+  let [tab] = await chrome.tabs.query(queryOptions);
+  return tab;
+}
+
+async function messageToCS(tabId, payload) {
+  if (!payload.hasOwnProperty('action')) {
+    console.warn('[SW] trying to pass a message to service-worker without providing an "action" property: ', payload);
+    return;
+  }
+  console.log('[SW] send message to tab ', tabId, ':', payload);
+  try {
+    const response = await chrome.tabs.sendMessage(tabId, payload);
+    console.log(response);
+    return response;
+  } catch(err) { console.warn('[SW] CS unreachable', err) }
+}
 
 // sets a new value for isInjected
 function setIsInjected(newValue) {
@@ -32,8 +50,8 @@ async function isStyleInjected() {
   }
 }
 
-// retrieve an info from background.js
-async function askBackground(info) {
+// retrieve an info from the service worker
+async function getInfo(info) {
   let res = null;
   switch (info) {
     case 'isInjected':
@@ -46,41 +64,40 @@ async function askBackground(info) {
 // inject or remove CSS from the site
 async function injectCSS(newState) {
   const queryOptions = { url: 'https://*.twitch.tv/*'};
-  
-  // remove css before re-injecting to
-  // fix a bug when reloading the page
-  if (newState === true) {
-    await chrome.tabs.query(queryOptions, tabs => {
-      for(const tab of tabs) {
-        const cssInfos = {
-          target: { tabId: tab.id, allFrames: true },
-          files: [cssPath],
-        };
-        chrome.scripting.removeCSS(cssInfos);
-      }
-    });
-  }
 
   try {
     await chrome.tabs.query(queryOptions, tabs => {
       for(const tab of tabs) {
         const cssInfos = {
           target: { tabId: tab.id, allFrames: true },
-          files: [cssPath],
+          files: [CSS_PATH],
         };
-
-        if (newState) chrome.scripting.insertCSS(cssInfos);
-        else chrome.scripting.removeCSS(cssInfos);
+        
+        if (newState) {
+          // remove css before re-injecting to
+          // fix a bug when reloading the page
+          chrome.scripting.removeCSS(cssInfos);
+          chrome.scripting.insertCSS(cssInfos);
+        } else chrome.scripting.removeCSS(cssInfos);
       }
 
       setIsInjected(newState);
       return true;
     });
-  } catch(e) {
-    console.warn(e);
+  } catch(err) {
+    console.warn(err);
     return false;
   }
 }
+
+chrome.scripting.registerContentScripts([{
+  id: "session-script",
+  js: ["src/content-script.js"],
+  matches: ["https://*.twitch.tv/*"],
+  runAt: "document_end",
+}])
+  .then(() => console.log("[SW] CS registered"))
+  .catch((err) => console.warn("registration error", err));
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete") {
@@ -91,24 +108,23 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     // init style injection if needed
     isStyleInjected()
       .then(initIsInjected => injectCSS(initIsInjected));
+
+    // start observing for DOM changes
+    messageToCS(tabId, { action: 'startObserver', data: 'chat' });
   }
 });
 
 // handle messages
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  // used to get an info from the background
-  if (request.hasOwnProperty('getInfo'))
-    askBackground(request.getInfo).then(sendResponse);
-
-  // notifies the background that the slider's value has changed
-  if (request.hasOwnProperty('sliderUpdate'))
-    injectCSS(request.sliderUpdate).then(sendResponse);
+  if (request.action === 'getInfo') getInfo(request.data).then(sendResponse);
+  if (request.action === 'sliderUpdated') injectCSS(request.data);
 
   return true; // allows for async calls
 });
 
 // handle keyboard shortcuts
 chrome.commands.onCommand.addListener((command) => {
+  console.log('command called: ', command);
   switch (command) {
     case 'toggle':
       isStyleInjected()
