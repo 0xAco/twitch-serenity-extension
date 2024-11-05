@@ -1,5 +1,6 @@
 {
   "name": "Serenity - hide twitch viewer count",
+  "short_name": "Serenity",
   "description": "Keep your head free while you stream by hiding Twitch stats",
   "version": "1.1.0",
   "manifest_version": 3,
@@ -9,15 +10,6 @@
     "default_title": "Serenity extension for Twitch",
     "default_popup": "src/popup/popup.html"
   },
-  "commands": {
-    "toggle": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+T",
-        "mac": "Command+Shift+T"
-      },
-      "description": "Change mode"
-    }
-  },
   "icons": {
     "16": "public/icon16.png",
     "32": "public/icon32.png",
@@ -25,6 +17,15 @@
     "128": "public/icon128.png"
   },
   "background": {
-    "service_worker": "src/background.js"
+    "service_worker": "src/service-worker.js"
+  },
+  "commands": {
+    "toggle": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+I",
+        "mac": "Command+Shift+I"
+      },
+      "description": "Change mode"
+    }
   }
 }
