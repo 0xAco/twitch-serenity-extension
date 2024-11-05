@@ -139,7 +139,10 @@ body {
 
 .footer {
   z-index: 1;
-  margin-top: 35px;
+  margin-top: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .footer__link, .footer__link:visited {
@@ -156,8 +159,13 @@ body {
   opacity: .9;
 }
 
+.footer__separator {
+  opacity: .4;
+}
+
 .footer__text {
   color: white;
+  font-size: 1.1em;
 }
 
 .footer__icon {
