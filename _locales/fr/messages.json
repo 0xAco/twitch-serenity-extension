@@ -1,0 +1,30 @@
+{
+  "extName":  {
+    "message": "Serenity - Cachez le nombre de spectateurs",
+    "description": "nom de l'extension"
+  },
+  "extDescription": {
+    "message": "Gardez les idées claires pendant le live en cachant les compteurs de Twitch",
+    "description": "description de l'extension"
+  },
+  "commandToggle": {
+    "message": "Activer l'extension",
+    "description": "raccourci clavier pour activer ou désactivativer"
+  },
+  "hideStats": {
+    "message": "Cacher les stats",
+    "description": "libellé de la case à cocher"
+  },
+  "githubLabel": {
+    "message": "Voir sur github",
+    "description": "lien vers le repo github"
+  },
+  "githubBug": {
+    "message": "Signaler un bug",
+    "description": "ouvrir une issue sur github"
+  },
+  "raided": {
+    "message": "<span><span class=\"--serenity-bold\">$1</span> vient de raid la chaîne !</span>",
+    "descrpition": "message that pops in a raided channel's chat"
+  }
+}      
