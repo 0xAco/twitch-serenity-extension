@@ -1,14 +1,8 @@
 /* CONTENT SCRIPT - interact with the DOM */
 
-async function handleRaidedMessage(raidNode) {
-  // call SW to know extension status
-  const isInjected = await chrome.runtime.sendMessage({
-    action: 'getInfo',
-    data: 'isInjected'
-  });
+function handleRaidedMessage(raidNode) {
   const who = raidNode.querySelector('.bold');
-  if (isInjected)
-    raidNode.innerHTML = chrome.i18n.getMessage('raided', who.innerText);
+  raidNode.innerHTML = chrome.i18n.getMessage('raided', who.innerText);
 }
 
 function handleRaidChatMessage(textElement) {
@@ -16,7 +10,14 @@ function handleRaidChatMessage(textElement) {
   textElement.innerText = textElement.innerText.replace(digits, 'π')
 }
 
-function onMutation(mutations, observer) {
+async function onMutation(mutations, observer) {
+  // call SW to know extension status
+  const isInjected = await chrome.runtime.sendMessage({
+    action: 'getInfo',
+    data: 'isInjected'
+  });
+  if (!isInjected) return;
+
   for (const mutation of mutations) {
     if (!mutation.type === 'childList') continue;
     for (const newNode of mutation.addedNodes)  {
