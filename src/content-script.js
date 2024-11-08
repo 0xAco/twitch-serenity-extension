@@ -1,22 +1,34 @@
 /* CONTENT SCRIPT - interact with the DOM */
 
-async function onMutation(mutations, observer) {
+async function handleRaidedMessage(raidNode) {
+  // call SW to know extension status
+  const isInjected = await chrome.runtime.sendMessage({
+    action: 'getInfo',
+    data: 'isInjected'
+  });
+  const who = raidNode.querySelector('.bold');
+  if (isInjected)
+    raidNode.innerHTML = chrome.i18n.getMessage('raided', who.innerText);
+}
+
+function handleRaidChatMessage(textElement) {
+  const digits = /\d+/gm;
+  textElement.innerText = textElement.innerText.replace(digits, 'π')
+}
+
+function onMutation(mutations, observer) {
   for (const mutation of mutations) {
     if (!mutation.type === 'childList') continue;
     for (const newNode of mutation.addedNodes)  {
-      console.log('[CS] new node: ', newNode);
+      
+      // when a chat message contains raid
+      const textEl = newNode.querySelector('.seventv-chat-message-body > .text-token');
+      const raidRegex = /\braids?/gmi;
+      if (textEl && raidRegex.test(textEl.innerText)) handleRaidChatMessage(textEl);
+
+      // when the channel gets raided
       const raidNode = newNode.querySelector('.seventv-raid-message-container');
-      if (raidNode) {
-        // call SW to know extension status
-        const isInjected = await chrome.runtime.sendMessage({
-          action: 'getInfo',
-          data: 'isInjected'
-        });
-        const who = raidNode.querySelector('.bold');
-        if (isInjected) raidNode.innerHTML = `
-          <span class="--serenity-bold">${who.innerText}</span> just raided you!
-        `;
-      }
+      if (raidNode) handleRaidedMessage(raidNode);
     }
   }
   
@@ -39,7 +51,6 @@ async function startObserving(what) {
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log('request received: ', request);
   if (request.action === 'startObserver')
     startObserving(request.data).then(sendResponse);
 })

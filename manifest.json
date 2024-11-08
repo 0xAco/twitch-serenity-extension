@@ -1,7 +1,8 @@
 {
-  "name": "Serenity - hide twitch viewer count",
+  "name": "__MSG_extName__",
   "short_name": "Serenity",
-  "description": "Keep your head free while you stream by hiding Twitch stats",
+  "default_locale": "en",
+  "description": "__MSG_extDescription__",
   "version": "1.1.0",
   "manifest_version": 3,
   "permissions": ["scripting", "tabs", "storage"],
@@ -22,10 +23,10 @@
   "commands": {
     "toggle": {
       "suggested_key": {
-        "default": "Ctrl+Shift+I",
-        "mac": "Command+Shift+I"
+        "default": "Ctrl+Shift+U",
+        "mac": "Command+Shift+U"
       },
-      "description": "Change mode"
+      "description": "__MSG_commandToggle__"
     }
   }
 }

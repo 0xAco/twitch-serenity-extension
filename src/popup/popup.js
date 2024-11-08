@@ -7,6 +7,15 @@ async function messageToSW(payload) {
 
 document.addEventListener('DOMContentLoaded', function() {
   const slider = document.getElementById('slider');
+  // text elements
+  const sliderLabel = document.getElementById('slider-label');
+  const githubRepo = document.querySelector('#repo-link > .footer__text');
+  const githubIssue = document.querySelector('#repo-issue > .footer__text');
+
+  // translation
+  sliderLabel.innerText = chrome.i18n.getMessage('hideStats');
+  githubRepo.innerText = chrome.i18n.getMessage('githubLabel');
+  githubIssue.innerText = chrome.i18n.getMessage('githubBug');
 
   // restore check status
   messageToSW({ action: 'getInfo', data: 'isInjected' })

@@ -1,0 +1,30 @@
+{
+  "extName":  {
+    "message": "Serenity - hide twitch viewer count",
+    "description": "extension name"
+  },
+  "extDescription": {
+    "message": "Keep your head free while you stream by hiding Twitch stats",
+    "description": "extension description"
+  },
+  "commandToggle": {
+    "message": "Change mode",
+    "description": "toggle command keybinds"
+  },
+  "hideStats": {
+    "message": "Hide Twitch stats",
+    "description": "checkbox label"
+  },
+  "githubLabel": {
+    "message": "View on github",
+    "description": "link to the github repository"
+  },
+  "githubBug": {
+    "message": "Report a bug",
+    "description": "open an issue on github"
+  },
+  "raided": {
+    "message": "<span><span class=\"--serenity-bold\">$1</span> just raided you!</span>",
+    "descrpition": "message that pops in a raided channel's chat"
+  }
+}      

@@ -27,19 +27,19 @@
     rotate(@r(360)deg);
   </css-doodle>
 
-  <div class="main__title">
+  <header class="main__title">
     <h1 class="title__text">Serenity extension</h1>
     <span class="title__sub">config</span>
-  </div>
+  </header>
   <main class="main__content --glass">
     <label class="slider__switch">
       <input id="slider" class="slider__input" type="checkbox" checked>
       <span class="slider__display"></span>
     </label>
-    <label class="slider__label" for="slider">Cacher les stats Twitch</label>
+    <label id="slider-label" class="slider__label" for="slider">Hide Twitch stats</label>
   </main>
   <footer class="footer">
-    <a class="footer__link" href="https://github.com/0xAco/twitch-serenity-extension" target="_blank">
+    <a id="repo-link" class="footer__link" href="https://github.com/0xAco/twitch-serenity-extension" target="_blank">
       <svg class="footer__icon" version="1.1" width="20" height="20" viewBox="0 0 16 16"
         class="octicon octicon-mark-github" aria-hidden="true">
         <path fill-rule="evenodd"
@@ -49,7 +49,8 @@
       <span class="footer__text">View on GitHub</span>
     </a>
     <span class="footer__text footer__separator">//</span>
-    <a class="footer__link" href="https://github.com/0xAco/twitch-serenity-extension/issues/" target="_blank">
+    <a id="repo-issue" class="footer__link" href="https://github.com/0xAco/twitch-serenity-extension/issues/"
+      target="_blank">
       <span class="footer__text">Report a bug</span>
     </a>
   </footer>
