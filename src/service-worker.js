@@ -14,7 +14,6 @@ async function messageToCS(tabId, payload) {
     console.warn('[SW] trying to pass a message to service-worker without providing an "action" property: ', payload);
     return;
   }
-  console.log('[SW] send message to tab ', tabId, ':', payload);
   try {
     const response = await chrome.tabs.sendMessage(tabId, payload);
     console.log(response);
